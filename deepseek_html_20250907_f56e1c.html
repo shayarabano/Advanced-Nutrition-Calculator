@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calorie Calculator & Nutrition Guide | Weight Management Tool</title>
+    <meta name="description" content="Calculate your daily calorie needs with our advanced calorie calculator. Get personalized weight loss and weight gain tips, food energy conversion tools, and professional nutrition guidance.">
+    <meta name="keywords" content="calorie calculator, weight loss, weight gain, nutrition, diet planning, fitness, health, BMI, food energy converter">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --info: #7209b7;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --light: #212529;
+            --dark: #f8f9fa;
+            --gray: #adb5bd;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background-color: #e9ecef;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-button.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .calculator-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .input-with-icon input, 
+        .input-with-icon select {
+            padding-left: 45px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .unit-toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .unit-toggle span {
+            margin: 0 10px;
+            color: var(--gray);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #e9ecef;
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #dee2e6;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .results-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .results-container.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .result-box {
+            text-align: center;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fa;
+        }
+
+        .result-main {
+            background-color: #e7f5ff;
+            border-left: 5px solid var(--primary);
+        }
+
+        .result-loss {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+
+        .result-gain {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--dark);
+            color: var(--light);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .info-container {
+            margin-top: 30px;
+        }
+
+        .accordion {
+            background-color: #f8f9fa;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            border-radius: var(--border-radius);
+            outline: none;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .active, .accordion:hover {
+            background-color: #e9ecef;
+        }
+
+        .accordion:after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .active:after {
+            content: '\f077';
+        }
+
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+        }
+
+        .panel p {
+            padding: 15px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .ad-container {
+            width: 100%;
+            margin: 20px 0;
+            min-height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+
+        /* Animation for results */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .converter-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .history-item {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fa;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .macronutrient-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .macro-box {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        .protein {
+            border-top: 4px solid #4361ee;
+        }
+
+        .carbs {
+            border-top: 4px solid #f72585;
+        }
+
+        .fat {
+            border-top: 4px solid #ff9e00;
+        }
+
+        .macro-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .macro-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .health-tips {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .health-tips {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .tip-card {
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            box-shadow: var(--box-shadow);
+        }
+
+        .tip-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-card ul {
+            padding-left: 20px;
+        }
+
+        .tip-card li {
+            margin-bottom: 10px;
+        }
+
+        .bmi-indicator {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: #e7f5ff;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .progress-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .water-intake {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, #e7f5ff, #d0ebff);
+            text-align: center;
+        }
+
+        .water-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HealthTool",
+      "name": "Advanced Calorie Calculator & Nutrition Guide",
+      "description": "Calculate your daily calorie needs with our advanced calorie calculator. Get personalized weight loss and weight gain tips, food energy conversion tools, and professional nutrition guidance.",
+      "url": "https://example.com/calorie-calculator",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Health & Nutrition Experts"
+      }
+    }
+    </script>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Advanced Nutrition Calculator</h1>
+            <p>Calculate your calorie needs, get personalized weight management tips, and convert between food energy units with our comprehensive nutrition tool.</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="calorie-calculator">Calorie Calculator</button>
+            <button class="tab-button" data-tab="energy-converter">Food Energy Converter</button>
+            <button class="tab-button" data-tab="health-tips">Health Tips</button>
+            <button class="tab-button" data-tab="history">History</button>
+        </div>
+
+        <!-- Calorie Calculator Tab -->
+        <div class="tab-content active" id="calorie-calculator">
+            <div class="card calculator-grid">
+                <div>
+                    <div class="unit-toggle">
+                        <span>Metric</span>
+                        <label class="switch">
+                            <input type="checkbox" id="unitToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Imperial</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-birthday-cake"></i>
+                            <input type="number" id="age" placeholder="Age in years" min="15" max="120">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-venus-mars"></i>
+                            <select id="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight" id="weightLabel">Weight (kg)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-weight"></i>
+                            <input type="number" id="weight" placeholder="Weight in kg" min="30" max="300">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height" id="heightLabel">Height (cm)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-ruler-vertical"></i>
+                            <input type="number" id="height" placeholder="Height in cm" min="100" max="250">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity">Activity Level</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-running"></i>
+                            <select id="activity">
+                                <option value="1.2">Sedentary (little or no exercise)</option>
+                                <option value="1.375">Lightly active (light exercise 1-3 days/week)</option>
+                                <option value="1.55">Moderately active (moderate exercise 3-5 days/week)</option>
+                                <option value="1.725">Very active (hard exercise 6-7 days/week)</option>
+                                <option value="1.9">Extra active (very hard exercise, physical job)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="btn-primary" id="calculateBtn">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="btn-secondary" id="resetBtn">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="results-container" id="resultsContainer">
+                        <h3>Your Daily Calorie Needs:</h3>
+                        
+                        <div class="result-box result-main fade-in">
+                            <div class="result-title">Maintenance</div>
+                            <div class="result-value" id="maintenanceCalories">0 calories</div>
+                        </div>
+                        
+                        <div class="result-box result-loss fade-in">
+                            <div class="result-title">Weight Loss</div>
+                            <div class="result-value" id="lossCalories">0 calories</div>
+                        </div>
+                        
+                        <div class="result-box result-gain fade-in">
+                            <div class="result-title">Weight Gain</div>
+                            <div class="result-value" id="gainCalories">0 calories</div>
+                        </div>
+
+                        <div class="macronutrient-grid">
+                            <div class="macro-box protein">
+                                <div class="macro-title">Protein</div>
+                                <div class="macro-value" id="proteinValue">0g</div>
+                            </div>
+                            <div class="macro-box carbs">
+                                <div class="macro-title">Carbs</div>
+                                <div class="macro-value" id="carbsValue">0g</div>
+                            </div>
+                            <div class="macro-box fat">
+                                <div class="macro-title">Fat</div>
+                                <div class="macro-value" id="fatValue">0g</div>
+                            </div>
+                        </div>
+
+                        <div class="bmi-indicator">
+                            <h3>Your BMI: <span id="bmiValue">0</span></h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="bmiProgress"></div>
+                            </div>
+                            <div class="progress-labels">
+                                <span>Underweight</span>
+                                <span>Normal</span>
+                                <span>Overweight</span>
+                                <span>Obese</span>
+                            </div>
+                            <div class="progress-markers">
+                                <span>18.5</span>
+                                <span>25</span>
+                                <span>30</span>
+                                <span>40</span>
+                            </div>
+                            <p id="bmiCategory">Calculate your BMI</p>
+                        </div>
+
+                        <div class="water-intake">
+                            <h3>Recommended Daily Water Intake</h3>
+                            <div class="water-value" id="waterValue">0 liters</div>
+                            <p>Based on your weight and activity level</p>
+                        </div>
+
+                        <div class="share-buttons">
+                            <button class="btn-info" id="saveBtn">
+                                <i class="fas fa-save"></i> Save Results
+                            </button>
+                            <button class="btn-info" id="shareBtn">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Energy Converter Tab -->
+        <div class="tab-content" id="energy-converter">
+            <div class="card converter-grid">
+                <div>
+                    <div class="form-group">
+                        <label for="energyValue">Energy Value</label>
+                        <input type="number" id="energyValue" placeholder="Enter value" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fromUnit">From Unit</label>
+                        <select id="fromUnit">
+                            <option value="calories">Calories (cal)</option>
+                            <option value="kilocalories" selected>Kilocalories (kcal)</option>
+                            <option value="kilojoules">Kilojoules (kJ)</option>
+                            <option value="joules">Joules (J)</option>
+                            <option value="britishThermal">British Thermal Units (BTU)</option>
+                            <option value="usTherms">US Therms</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="toUnit">To Unit</label>
+                        <select id="toUnit">
+                            <option value="calories">Calories (cal)</option>
+                            <option value="kilocalories" selected>Kilocalories (kcal)</option>
+                            <option value="kilojoules">Kilojoules (kJ)</option>
+                            <option value="joules">Joules (J)</option>
+                            <option value="britishThermal">British Thermal Units (BTU)</option>
+                            <option value="usTherms">US Therms</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" id="convertBtn">
+                        <i class="fas fa-exchange-alt"></i> Convert
+                    </button>
+                </div>
+
+                <div>
+                    <div class="result-box result-main">
+                        <div class="result-title">Conversion Result</div>
+                        <div class="result-value" id="conversionResult">0</div>
+                    </div>
+
+                    <div class="info-container">
+                        <h3>Common Food Energy Conversions:</h3>
+                        <ul>
+                            <li>1 kilocalorie (kcal) = 4.184 kilojoules (kJ)</li>
+                            <li>1 calorie (cal) = 4.184 joules (J)</li>
+                            <li>1 kilocalorie = 1000 calories</li>
+                            <li>1 kilojoule = 1000 joules</li>
+                            <li>1 BTU = 0.252 kilocalories</li>
+                            <li>1 US Therm = 25,200 kilocalories</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Tips Tab -->
+        <div class="tab-content" id="health-tips">
+            <div class="health-tips">
+                <div class="tip-card">
+                    <h3><i class="fas fa-weight-loss"></i> Weight Loss Tips</h3>
+                    <ul>
+                        <li>Create a calorie deficit of 500-1000 calories per day for safe weight loss of 1-2 pounds per week</li>
+                        <li>Focus on nutrient-dense foods like vegetables, fruits, lean proteins, and whole grains</li>
+                        <li>Drink plenty of water - sometimes thirst is mistaken for hunger</li>
+                        <li>Incorporate both cardio and strength training exercises</li>
+                        <li>Get adequate sleep - poor sleep can disrupt hunger hormones</li>
+                        <li>Practice mindful eating and avoid distractions during meals</li>
+                        <li>Keep a food journal to increase awareness of eating habits</li>
+                        <li>Limit processed foods and added sugars</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3><i class="fas fa-weight"></i> Weight Gain Tips</h3>
+                    <ul>
+                        <li>Aim for a calorie surplus of 300-500 calories per day for gradual weight gain</li>
+                        <li>Focus on calorie-dense nutritious foods like nuts, avocados, and healthy oils</li>
+                        <li>Eat more frequent meals - 5-6 smaller meals throughout the day</li>
+                        <li>Include protein with each meal to support muscle growth</li>
+                        <li>Incorporate strength training to build muscle mass rather than just fat</li>
+                        <li>Choose nutrient-rich smoothies and shakes over sugary drinks</li>
+                        <li>Don't fill up on water before meals - this can reduce appetite</li>
+                        <li>Track your progress and adjust your calorie intake as needed</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3><i class="fas fa-apple-alt"></i> Nutrition Guidelines</h3>
+                    <ul>
+                        <li>Aim for a balanced diet with carbohydrates, proteins, and fats</li>
+                        <li>Fill half your plate with vegetables and fruits</li>
+                        <li>Choose whole grains over refined carbohydrates</li>
+                        <li>Include healthy fats from sources like avocados, nuts, and olive oil</li>
+                        <li>Limit added sugars to less than 10% of your daily calories</li>
+                        <li>Reduce sodium intake to less than 2,300mg per day</li>
+                        <li>Eat a variety of protein sources including plant-based options</li>
+                        <li>Stay hydrated with water as your primary beverage</li>
+                    </ul>
+                </div>
+
+                <div class="tip-card">
+                    <h3><i class="fas fa-running"></i> Exercise Recommendations</h3>
+                    <ul>
+                        <li>Aim for at least 150 minutes of moderate aerobic activity per week</li>
+                        <li>Include strength training exercises for all major muscle groups 2+ days per week</li>
+                        <li>Incorporate flexibility and balance training</li>
+                        <li>Find activities you enjoy to maintain consistency</li>
+                        <li>Gradually increase intensity and duration to avoid injury</li>
+                        <li>Listen to your body and allow for recovery time</li>
+                        <li>Consider working with a certified fitness professional</li>
+                        <li>Stay active throughout the day, not just during exercise sessions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-content" id="history">
+            <div class="card">
+                <h2>Your Calculation History</h2>
+                <div id="historyList">
+                    <p>No history yet. Calculations will appear here.</p>
+                </div>
+                <button class="btn-warning" id="clearHistoryBtn">
+                    <i class="fas fa-trash"></i> Clear History
+                </button>
+            </div>
+        </div>
+
+        <div class="ad-container">
+            <!-- AdMob Banner Ad Placeholder -->
+            <!-- Replace with actual AdMob code -->
+            <p>AdMob Banner Ad</p>
+        </div>
+
+        <div class="card info-container">
+            <h2>Frequently Asked Questions</h2>
+            
+            <button class="accordion">How is calorie calculation performed?</button>
+            <div class="panel">
+                <p>We use the Mifflin-St Jeor equation, which is considered the most accurate for calculating BMR (Basal Metabolic Rate). Your BMR is then multiplied by your activity level to determine your Total Daily Energy Expenditure (TDEE).</p>
+            </div>
+
+            <button class="accordion">What is the Mifflin-St Jeor Equation?</button>
+            <div class="panel">
+                <p>For men: BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age(y) + 5</p>
+                <p>For women: BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age(y) - 161</p>
+            </div>
+
+            <button class="accordion">How accurate is this calculator?</button>
+            <div class="panel">
+                <p>This calculator provides a good estimate based on equations used by nutrition professionals. However, individual variations may occur due to genetics, muscle mass, and other factors. For personalized advice, consult a registered dietitian.</p>
+            </div>
+
+            <button class="accordion">What's the best approach for weight loss?</button>
+            <div class="panel">
+                <p>The healthiest approach to weight loss combines a modest calorie reduction with increased physical activity. Aim for 1-2 pounds of weight loss per week. Extreme calorie restriction can lead to muscle loss, nutrient deficiencies, and metabolic adaptation that makes long-term weight maintenance difficult.</p>
+            </div>
+
+            <button class="accordion">How can I gain weight in a healthy way?</button>
+            <div class="panel">
+                <p>Healthy weight gain focuses on increasing calorie intake with nutrient-dense foods while engaging in strength training to build muscle mass. Avoid relying on junk food - instead, choose calorie-dense healthy options like nuts, seeds, avocados, and whole grains. A surplus of 300-500 calories per day is typically appropriate for gradual weight gain.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>About Our Calorie Calculator</h2>
+            <p>Our advanced calorie calculator uses scientifically validated equations to estimate your daily calorie needs based on your personal information and activity level. Whether your goal is weight loss, weight maintenance, or weight gain, understanding your daily calorie requirements is an essential first step in developing a successful nutrition plan.</p>
+            <p>This tool also provides macronutrient breakdowns, BMI calculation, and personalized hydration recommendations to support your health and wellness journey. Remember that these calculations are estimates - individual needs may vary based on metabolism, health conditions, and other factors.</p>
+            <p>For best results, combine the information from this calculator with evidence-based nutrition practices like consuming a variety of whole foods, practicing portion control, and maintaining a consistent eating pattern that supports your lifestyle and preferences.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Advanced Nutrition Calculator | Privacy Policy | Terms of Service</p>
+        <p>Disclaimer: This calculator provides estimates only and is not a substitute for professional medical advice.</p>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const ageInput = document.getElementById('age');
+        const genderSelect = document.getElementById('gender');
+        const weightInput = document.getElementById('weight');
+        const heightInput = document.getElementById('height');
+        const activitySelect = document.getElementById('activity');
+        const unitToggle = document.getElementById('unitToggle');
+        const weightLabel = document.getElementById('weightLabel');
+        const heightLabel = document.getElementById('heightLabel');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const maintenanceCalories = document.getElementById('maintenanceCalories');
+        const lossCalories = document.getElementById('lossCalories');
+        const gainCalories = document.getElementById('gainCalories');
+        const themeToggle = document.getElementById('themeToggle');
+        const accordions = document.getElementsByClassName('accordion');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const energyValueInput = document.getElementById('energyValue');
+        const fromUnitSelect = document.getElementById('fromUnit');
+        const toUnitSelect = document.getElementById('toUnit');
+        const convertBtn = document.getElementById('convertBtn');
+        const conversionResult = document.getElementById('conversionResult');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const proteinValue = document.getElementById('proteinValue');
+        const carbsValue = document.getElementById('carbsValue');
+        const fatValue = document.getElementById('fatValue');
+        const bmiValue = document.getElementById('bmiValue');
+        const bmiProgress = document.getElementById('bmiProgress');
+        const bmiCategory = document.getElementById('bmiCategory');
+        const waterValue = document.getElementById('waterValue');
+
+        // Unit conversion state
+        let isMetric = true;
+
+        // Tab functionality
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tab = button.dataset.tab;
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(tab).classList.add('active');
+            });
+        });
+
+        // Load saved data from localStorage
+        function loadSavedData() {
+            const savedData = JSON.parse(localStorage.getItem('calorieCalculatorData'));
+            if (savedData) {
+                ageInput.value = savedData.age || '';
+                genderSelect.value = savedData.gender || 'male';
+                weightInput.value = savedData.weight || '';
+                heightInput.value = savedData.height || '';
+                activitySelect.value = savedData.activity || '1.2';
+                isMetric = savedData.isMetric !== undefined ? savedData.isMetric : true;
+                unitToggle.checked = !isMetric;
+                updateUnitLabels();
+            }
+            
+            // Load history
+            loadHistory();
+        }
+
+        // Load calculation history
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('calorieCalculatorHistory')) || [];
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<p>No history yet. Calculations will appear here.</p>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            history.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-date">${item.date}</div>
+                    <div><strong>Maintenance:</strong> ${item.maintenance} calories</div>
+                    <div><strong>Weight Loss:</strong> ${item.loss} calories</div>
+                    <div><strong>Weight Gain:</strong> ${item.gain} calories</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            const data = {
+                age: ageInput.value,
+                gender: genderSelect.value,
+                weight: weightInput.value,
+                height: heightInput.value,
+                activity: activitySelect.value,
+                isMetric: isMetric
+            };
+            localStorage.setItem('calorieCalculatorData', JSON.stringify(data));
+        }
+
+        // Save results to history
+        function saveToHistory(maintenance, loss, gain) {
+            const history = JSON.parse(localStorage.getItem('calorieCalculatorHistory')) || [];
+            
+            // Add new result to beginning of array
+            history.unshift({
+                date: new Date().toLocaleString(),
+                maintenance: maintenance,
+                loss: loss,
+                gain: gain
+            });
+            
+            // Keep only last 10 results
+            if (history.length > 10) {
+                history.pop();
+            }
+            
+            localStorage.setItem('calorieCalculatorHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        // Update unit labels based on current system
+        function updateUnitLabels() {
+            if (isMetric) {
+                weightLabel.textContent = 'Weight (kg)';
+                heightLabel.textContent = 'Height (cm)';
+                weightInput.placeholder = 'Weight in kg';
+                heightInput.placeholder = 'Height in cm';
+            } else {
+                weightLabel.textContent = 'Weight (lbs)';
+                heightLabel.textContent = 'Height (inches)';
+                weightInput.placeholder = 'Weight in lbs';
+                heightInput.placeholder = 'Height in inches';
+            }
+        }
+
+        // Convert between metric and imperial
+        function convertUnits() {
+            if (weightInput.value) {
+                if (isMetric) {
+                    // Convert kg to lbs
+                    weightInput.value = (parseFloat(weightInput.value) * 2.20462).toFixed(1);
+                } else {
+                    // Convert lbs to kg
+                    weightInput.value = (parseFloat(weightInput.value) / 2.20462).toFixed(1);
+                }
+            }
+
+            if (heightInput.value) {
+                if (isMetric) {
+                    // Convert cm to inches
+                    heightInput.value = (parseFloat(heightInput.value) / 2.54).toFixed(1);
+                } else {
+                    // Convert inches to cm
+                    heightInput.value = (parseFloat(heightInput.value) * 2.54).toFixed(1);
+                }
+            }
+        }
+
+        // Calculate BMI
+        function calculateBMI(weight, height) {
+            // Convert to metric if needed
+            if (!isMetric) {
+                weight = weight / 2.20462; // lbs to kg
+                height = height * 2.54; // inches to cm
+            }
+            
+            // Calculate BMI (kg/m²)
+            const heightInMeters = height / 100;
+            return weight / (heightInMeters * heightInMeters);
+        }
+
+        // Update BMI indicator
+        function updateBMIIndicator(bmi) {
+            bmiValue.textContent = bmi.toFixed(1);
+            
+            // Set BMI category
+            if (bmi < 18.5) {
+                bmiCategory.textContent = 'Underweight';
+                bmiCategory.style.color = '#4cc9f0';
+            } else if (bmi < 25) {
+                bmiCategory.textContent = 'Normal weight';
+                bmiCategory.style.color = '#28a745';
+            } else if (bmi < 30) {
+                bmiCategory.textContent = 'Overweight';
+                bmiCategory.style.color = '#ffc107';
+            } else {
+                bmiCategory.textContent = 'Obese';
+                bmiCategory.style.color = '#dc3545';
+            }
+            
+            // Update progress bar
+            let progressWidth = 0;
+            if (bmi < 18.5) {
+                progressWidth = (bmi / 18.5) * 25;
+            } else if (bmi < 25) {
+                progressWidth = 25 + ((bmi - 18.5) / 6.5) * 25;
+            } else if (bmi < 30) {
+                progressWidth = 50 + ((bmi - 25) / 5) * 25;
+            } else if (bmi < 40) {
+                progressWidth = 75 + ((bmi - 30) / 10) * 25;
+            } else {
+                progressWidth = 100;
+            }
+            
+            bmiProgress.style.width = `${progressWidth}%`;
+        }
+
+        // Calculate water intake
+        function calculateWaterIntake(weight, activityLevel) {
+            // Base water intake (30-35 ml per kg of body weight)
+            let baseWater = weight * 0.033;
+            
+            // Adjust for activity level
+            const activityFactor = parseFloat(activityLevel);
+            const additionalWater = (activityFactor - 1) * 0.5;
+            
+            return baseWater + additionalWater;
+        }
+
+        // Calculate calorie needs
+        function calculateCalories() {
+            const age = parseInt(ageInput.value);
+            const gender = genderSelect.value;
+            let weight = parseFloat(weightInput.value);
+            let height = parseFloat(heightInput.value);
+            const activity = parseFloat(activitySelect.value);
+
+            // Validate inputs
+            if (!age || !weight || !height) {
+                alert('Please fill in all fields with valid numbers.');
+                return;
+            }
+
+            // Convert to metric if imperial is selected
+            if (!isMetric) {
+                weight = weight / 2.20462; // lbs to kg
+                height = height * 2.54; // inches to cm
+            }
+
+            // Calculate BMR using Mifflin-St Jeor Equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            }
+
+            // Calculate TDEE
+            const tdee = Math.round(bmr * activity);
+
+            // Calculate macronutrients (40% carbs, 30% protein, 30% fat)
+            const proteinGrams = Math.round((tdee * 0.3) / 4);
+            const carbsGrams = Math.round((tdee * 0.4) / 4);
+            const fatGrams = Math.round((tdee * 0.3) / 9);
+
+            // Calculate BMI
+            const bmi = calculateBMI(parseFloat(weightInput.value), parseFloat(heightInput.value));
+            
+            // Calculate water intake
+            const waterIntake = calculateWaterIntake(weight, activity);
+
+            // Display results
+            maintenanceCalories.textContent = `${tdee} calories`;
+            lossCalories.textContent = `${tdee - 500} calories`;
+            gainCalories.textContent = `${tdee + 500} calories`;
+            
+            // Display macronutrients
+            proteinValue.textContent = `${proteinGrams}g`;
+            carbsValue.textContent = `${carbsGrams}g`;
+            fatValue.textContent = `${fatGrams}g`;
+            
+            // Display BMI and water intake
+            updateBMIIndicator(bmi);
+            waterValue.textContent = `${waterIntake.toFixed(2)} liters`;
+
+            // Show results with animation
+            resultsContainer.classList.add('show');
+
+            // Save data and history
+            saveData();
+            saveToHistory(tdee, tdee - 500, tdee + 500);
+
+            // Show interstitial ad (placeholder)
+            // AdMob interstitial ad code would go here
+            console.log('Show interstitial ad');
+        }
+
+        // Convert food energy units
+        function convertEnergy() {
+            const value = parseFloat(energyValueInput.value);
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+            
+            if (!value || value <= 0) {
+                alert('Please enter a valid energy value.');
+                return;
+            }
+            
+            // Convert to calories first (base unit)
+            let valueInCalories;
+            
+            switch (fromUnit) {
+                case 'calories':
+                    valueInCalories = value;
+                    break;
+                case 'kilocalories':
+                    valueInCalories = value * 1000;
+                    break;
+                case 'kilojoules':
+                    valueInCalories = value * 239;
+                    break;
+                case 'joules':
+                    valueInCalories = value * 0.239;
+                    break;
+                case 'britishThermal':
+                    valueInCalories = value * 252;
+                    break;
+                case 'usTherms':
+                    valueInCalories = value * 25200000;
+                    break;
+                default:
+                    valueInCalories = value;
+            }
+            
+            // Convert from calories to target unit
+            let result;
+            
+            switch (toUnit) {
+                case 'calories':
+                    result = valueInCalories;
+                    break;
+                case 'kilocalories':
+                    result = valueInCalories / 1000;
+                    break;
+                case 'kilojoules':
+                    result = valueInCalories / 239;
+                    break;
+                case 'joules':
+                    result = valueInCalories / 0.239;
+                    break;
+                case 'britishThermal':
+                    result = valueInCalories / 252;
+                    break;
+                case 'usTherms':
+                    result = valueInCalories / 25200000;
+                    break;
+                default:
+                    result = valueInCalories;
+            }
+            
+            // Display result with 2 decimal places
+            conversionResult.textContent = `${result.toFixed(2)} ${toUnit}`;
+        }
+
+        // Reset form
+        function resetForm() {
+            ageInput.value = '';
+            genderSelect.value = 'male';
+            weightInput.value = '';
+            heightInput.value = '';
+            activitySelect.value = '1.2';
+            resultsContainer.classList.remove('show');
+            localStorage.removeItem('calorieCalculatorData');
+        }
+
+        // Clear history
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear your calculation history?')) {
+                localStorage.removeItem('calorieCalculatorHistory');
+                loadHistory();
+            }
+        }
+
+        // Save results
+        function saveResults() {
+            const results = {
+                maintenance: maintenanceCalories.textContent,
+                loss: lossCalories.textContent,
+                gain: gainCalories.textContent,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            localStorage.setItem('calorieCalculatorResults', JSON.stringify(results));
+            alert('Results saved successfully!');
+        }
+
+        // Share results
+        function shareResults() {
+            const shareText = `My daily calorie needs: 
+- Maintenance: ${maintenanceCalories.textContent}
+- Weight Loss: ${lossCalories.textContent}
+- Weight Gain: ${gainCalories.textContent}
+            
+Calculated with Advanced Nutrition Calculator`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Calorie Calculation',
+                    text: shareText
+                }).catch(console.error);
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Results copied to clipboard!');
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            }
+        }
+
+        // Toggle dark/light mode
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = themeToggle.querySelector('i');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+
+        // Event Listeners
+        unitToggle.addEventListener('change', function() {
+            if (weightInput.value || heightInput.value) {
+                if (!confirm('Changing units will convert your current values. Continue?')) {
+                    this.checked = !this.checked;
+                    return;
+                }
+            }
+            
+            isMetric = !this.checked;
+            convertUnits();
+            updateUnitLabels();
+            saveData();
+        });
+
+        calculateBtn.addEventListener('click', calculateCalories);
+        resetBtn.addEventListener('click', resetForm);
+        saveBtn.addEventListener('click', saveResults);
+        shareBtn.addEventListener('click', shareResults);
+        themeToggle.addEventListener('click', toggleTheme);
+        convertBtn.addEventListener('click', convertEnergy);
+        clearHistoryBtn.addEventListener('click', clearHistory);
+
+        // Input validation
+        [ageInput, weightInput, heightInput].forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+            });
+        });
+
+        // Accordion functionality
+        for (let i = 0; i < accordions.length; i++) {
+            accordions[i].addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + 'px';
+                }
+            });
+        }
+
+        // Initialize
+        loadSavedData();
+        loadTheme();
+        updateUnitLabels();
+    </script>
+</body>
+</html>
